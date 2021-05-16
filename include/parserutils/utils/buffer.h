@@ -18,6 +18,7 @@ extern "C"
 
 struct parserutils_buffer
 {
+	uint8_t *alloc;
 	uint8_t *data;
 	size_t length;
 	size_t allocated;
