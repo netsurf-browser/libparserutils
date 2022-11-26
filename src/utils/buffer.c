@@ -6,6 +6,7 @@
  */
 
 #include <string.h>
+#include <stdarg.h>
 
 #include <parserutils/utils/buffer.h>
 
@@ -128,6 +129,38 @@ parserutils_error parserutils_buffer_append(parserutils_buffer *buffer,
 	buffer->length += len;
 
 	return PARSERUTILS_OK;
+}
+
+/**
+ * Append multiple data blocks to a memory buffer.
+ *
+ * Each data block must be passed as a pair of const uint8_t* and size_t
+ *
+ * \param buffer  The buffer to append to
+ * \param count   The number of data blocks to append
+ * \param ...     The pairs of pointer and size
+ * \return PARSERUTILS_OK on success, appropriate error otherwise.
+*/
+parserutils_error parserutils_buffer_appendv(parserutils_buffer *buffer,
+		size_t count, ...)
+{
+	va_list ap;
+	parserutils_error error;
+	const uint8_t *data;
+	size_t len;
+
+	va_start(ap, count);
+	while (count > 0) {
+		data = va_arg(ap, const uint8_t *);
+		len = va_arg(ap, size_t);
+		error = parserutils_buffer_append(buffer, data, len);
+		if (error != PARSERUTILS_OK)
+			break;
+		count--;
+	}
+	va_end(ap);
+
+	return error;
 }
 
 /**
