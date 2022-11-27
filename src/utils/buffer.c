@@ -145,7 +145,7 @@ parserutils_error parserutils_buffer_appendv(parserutils_buffer *buffer,
 		size_t count, ...)
 {
 	va_list ap;
-	parserutils_error error;
+	parserutils_error error = PARSERUTILS_OK;
 	const uint8_t *data;
 	size_t len;
 
