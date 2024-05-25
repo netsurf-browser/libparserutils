@@ -409,8 +409,8 @@ parserutils_error charset_utf8_codec_read_char(charset_utf8_codec *c,
 		const uint8_t **source, size_t *sourcelen,
 		uint8_t **dest, size_t *destlen)
 {
-	uint32_t ucs4;
-	size_t sucs4;
+	uint32_t ucs4 = 0;
+	size_t sucs4 = 0;
 	parserutils_error error;
 
 	/* Convert a single character */
