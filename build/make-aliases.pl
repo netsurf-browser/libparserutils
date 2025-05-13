@@ -6,9 +6,15 @@
 #                John-Mark Bell <jmb@netsurf-browser.org>
 
 use strict;
+use Cwd;
 
-use constant ALIAS_FILE => 'build/Aliases';
-use constant ALIAS_INC  => 'src/charset/aliases.inc';
+# Debug: Print current working directory
+print "Current working directory: ", getcwd(), "\n";
+
+# Use command-line argument for Aliases file, fallback to build/Aliases
+my $ALIAS_FILE = $ARGV[2] // 'build/Aliases';
+# Use command-line argument for output directory, construct ALIAS_INC
+my $ALIAS_INC = $ARGV[1] ? "$ARGV[1]/aliases.inc" : 'src/charset/aliases.inc';
 
 use constant UNICODE_CHARSETS => 
   [
@@ -18,7 +24,7 @@ use constant UNICODE_CHARSETS =>
    qr'^UTF-32'
   ];
 
-open(INFILE, "<", ALIAS_FILE) || die "Unable to open " . ALIAS_FILE;
+open(INFILE, "<", $ALIAS_FILE) || die "Unable to open $ALIAS_FILE: $!";
 
 my %charsets;
 
@@ -110,7 +116,7 @@ static const uint16_t charset_aliases_count = ${aliascount};
 #define MIBENUM_IS_UNICODE(x) ($unicodeexp)
 EOS
 
-if (open(EXISTING, "<", ALIAS_INC)) {
+if (open(EXISTING, "<", $ALIAS_INC)) {
    local $/ = undef();
    my $now = <EXISTING>;
    undef($output) if ($output eq $now);
@@ -118,7 +124,7 @@ if (open(EXISTING, "<", ALIAS_INC)) {
 }
 
 if (defined($output)) {
-   open(OUTF, ">", ALIAS_INC);
-   print OUTF $output;
-   close(OUTF);
+   open(OUTF, ">", $ALIAS_INC) || die "Unable to open $ALIAS_INC for writing: $!";
+   print OUTF $output or die "Unable to write to $ALIAS_INC: $!";
+   close(OUTF) or die "Unable to close $ALIAS_INC: $!";
 }
