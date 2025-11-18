@@ -99,14 +99,25 @@ parserutils_error parserutils_vector_append(parserutils_vector *vector,
 	slot = vector->current_item + 1;
 
 	if ((size_t) slot >= vector->items_allocated) {
-		void *temp = realloc(vector->items,
-				(vector->items_allocated + vector->chunk_size) *
-				vector->item_size);
+		/* Exponential growth: double current allocation,
+		   but at least add chunk_size */
+		size_t new_allocated = vector->items_allocated * 2;
+		void *temp;
+
+		if (new_allocated < vector->items_allocated + vector->chunk_size)
+			new_allocated = vector->items_allocated + vector->chunk_size;
+
+		/* Overflow check */
+		if (new_allocated < vector->items_allocated ||
+		    new_allocated > SIZE_MAX / vector->item_size)
+			return PARSERUTILS_NOMEM;
+
+		temp = realloc(vector->items, new_allocated * vector->item_size);
 		if (temp == NULL)
 			return PARSERUTILS_NOMEM;
 
 		vector->items = temp;
-		vector->items_allocated += vector->chunk_size;
+		vector->items_allocated = new_allocated;
 	}
 
 	memcpy((uint8_t *) vector->items + (slot * vector->item_size), 
