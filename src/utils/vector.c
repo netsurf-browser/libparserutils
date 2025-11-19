@@ -15,11 +15,11 @@
  */
 struct parserutils_vector
 {
-	size_t item_size;		/**< Size of an item in the vector */
-	size_t chunk_size;		/**< Size of a vector chunk */
-	size_t items_allocated;		/**< Number of slots allocated */
-	int32_t current_item;		/**< Index of current item */
-	void *items;			/**< Items in vector */
+	size_t item_size;       /**< Size of an item in the vector */
+	size_t chunk_size;      /**< Size of a vector chunk */
+	size_t items_allocated; /**< Number of slots allocated */
+	int32_t current_item;   /**< Index of current item */
+	void *items;            /**< Items in vector */
 };
 
 /**
@@ -175,15 +175,15 @@ parserutils_error parserutils_vector_remove_last(parserutils_vector *vector)
 parserutils_error parserutils_vector_get_length(parserutils_vector *vector,
                                                 size_t *length)
 {
-        if (vector == NULL)
-                return PARSERUTILS_BADPARM;
-        
-        if (length == NULL)
-                return PARSERUTILS_BADPARM;
-        
-        *length = vector->current_item + 1;
-        
-        return PARSERUTILS_OK;
+	if (vector == NULL)
+		return PARSERUTILS_BADPARM;
+
+	if (length == NULL)
+		return PARSERUTILS_BADPARM;
+
+	*length = vector->current_item + 1;
+
+	return PARSERUTILS_OK;
 }
 
 /**
